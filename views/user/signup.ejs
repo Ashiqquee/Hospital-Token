@@ -96,7 +96,10 @@
             const passwordInput = document.getElementById('password');
             const rePasswordInput = document.getElementById('re-password');
 
-
+            const errorMessageUser = document.getElementById('errorUser');
+            const errorMessagePhone = document.getElementById('errorPhone');
+            const errorMessagePassword = document.getElementById('errorPassword');
+            const errorMessageRePassword = document.getElementById('errorRePassword');
 
             const usernameValue = usernameInput.value.trim();
             const phoneValue = phoneInput.value.trim();
@@ -104,56 +107,41 @@
             const rePasswordValue = rePasswordInput.value.trim();
 
 
-
-
+            usernameInput.style.borderColor = '';
+            phoneInput.style.borderColor = '';
+            passwordInput.style.borderColor = '';
+            rePasswordInput.style.borderColor = '';
+            errorMessageUser.style.display = 'none';
+            errorMessagePhone.style.display = 'none';
+            errorMessagePassword.style.display = 'none';
+            errorMessageRePassword.style.display = 'none';
 
             if (usernameValue < 4) {
                 usernameInput.style.borderColor = 'red';
-                const errorMessageElement = document.getElementById('errorUser');
-                errorMessageElement.innerHTML = 'Enter Atleast 3 Charcters';
-                errorMessageElement.style.display = 'block';
+                errorMessageUser.innerHTML = 'Enter Atleast 3 Charcters';
+                errorMessageUser.style.display = 'block';
             }
-            else {
-                usernameInput.style.borderColor = '';
-            }
-
-
-
-
 
             if (phoneValue === '' || phoneValue.length !== 10) {
                 phoneInput.style.borderColor = 'red';
-                const errorMessageElement = document.getElementById('errorPhone');
-                errorMessageElement.innerHTML = 'Enter Valid Mobile Number';
-                errorMessageElement.style.display = 'block';
-            } else {
-                phoneInput.style.borderColor = '';
+                errorMessagePhone.innerHTML = 'Enter Valid Mobile Number';
+                errorMessagePhone.style.display = 'block';
             }
-
 
             if (passwordValue < 4) {
                 passwordInput.style.borderColor = 'red';
-
-                const errorMessageElement = document.getElementById('errorPassword');
-                errorMessageElement.innerHTML = 'Enter Atleast 4 Charcters';
-                errorMessageElement.style.display = 'block';
-            } else {
-                passwordInput.style.borderColor = '';
+                errorMessagePassword.innerHTML = 'Enter Atleast 4 Charcters';
+                errorMessagePassword.style.display = 'block';
             }
-
 
             if (rePasswordValue === '' || rePasswordValue !== passwordValue) {
                 rePasswordInput.style.borderColor = 'red';
-                const errorMessageElement = document.getElementById('errorRePassword');
-                errorMessageElement.innerHTML = "Password Doesn't Match";
-                errorMessageElement.style.display = 'block';
-
-            } else {
-                rePasswordInput.style.borderColor = '';
+                errorMessageRePassword.innerHTML = "Password Doesn't Match";
+                errorMessageRePassword.style.display = 'block';
             }
-            if (usernameValue < 4 && phoneValue !== 10 && passwordValue !== '' && rePasswordValue === passwordValue) {
-                const formData = new FormData(forms);
 
+            if (usernameValue.length > 2 && phoneValue.length === 10 && passwordValue.length > 3 && rePasswordValue.length > 3 && passwordValue === rePasswordValue) {
+                const formData = new FormData(forms);
 
                 const data = {
                     username: formData.get('username'),
@@ -161,7 +149,6 @@
                     password: formData.get('password'),
                     re_password: formData.get('re-password')
                 };
-
 
                 try {
                     const response = await fetch('/register', {
@@ -175,28 +162,25 @@
                     const responseData = await response.json();
 
                     if (responseData.status) {
-                        console.log("success");
                         window.location = "/login?success=register_success"
                     } else if (responseData.err === "username") {
-                        const errorMessageElement = document.getElementById('errorUser');
-                        errorMessageElement.innerHTML = 'Username already exists';
-                        errorMessageElement.style.display = 'block';
+                        errorMessageUser.innerHTML = 'Username already exists';
+                        errorMessageUser.style.display = 'block';
                     } else if (responseData.err === "phone") {
-                        const errorMessageElement = document.getElementById('errorPhone');
-                        errorMessageElement.innerHTML = 'Phone number already exists';
-                        errorMessageElement.style.display = 'block';
+                        errorMessagePhone.innerHTML = 'Phone number already exists';
+                        errorMessagePhone.style.display = 'block';
                     } else {
-                        const errorMessageElement = document.getElementById('errorUser');
-                        errorMessageElement.innerHTML = 'Something Went Worng';
-                        errorMessageElement.style.display = 'block';
+                        errorMessageUser.innerHTML = 'Something Went Worng';
+                        errorMessageUser.style.display = 'block';
                     }
 
                 } catch (error) {
                     console.error(error);
                 }
             }
+
         });
 
-
     </script>
+
     <%- include('../layouts/userFooter.ejs') %>
