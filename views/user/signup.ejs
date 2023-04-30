@@ -1,0 +1,202 @@
+<%- include('../layouts/userHeader.ejs') %>
+
+    <section class="md">
+        <div class="container">
+            <div class="row d-flex justify-content-center align-items-center">
+                <div class="col-lg-6">
+
+                    <div class="common-block">
+
+                        <div class="inner-title">
+                            <h4 class="mb-0">Register</h4>
+                            <p class="mb-0">There's lots of fun in Register.</p>
+                        </div>
+
+                        <form id="register" method="post" action="/register" enctype="multipart/form-data">
+
+                            <div class="row">
+
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label> User Name</label>
+                                        <input type="text" class="form-control" name="username" id="username"
+                                            placeholder="Your user name here">
+                                        <span style="color: red;" id="errorUser" style="display:none"></span>
+                                    </div>
+
+
+                                </div>
+
+                                <div class="col-sm-6">
+
+                                    <div class="form-group">
+                                        <label>Contact Number</label>
+                                        <input type="text" class="form-control" name="phone" id="phone"
+                                            placeholder="+91 000-999-111">
+                                        <span style="color: red;" id="errorPhone" style="display:none"></span>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+
+                            <div class="row">
+
+                                <div class="col-sm-6">
+
+                                    <div class="form-group">
+                                        <label>Password</label>
+                                        <input type="password" class="form-control" name="password" id="password"
+                                            placeholder="Your password here">
+                                        <span style="color: red;" id="errorPassword" style="display:none"></span>
+                                    </div>
+
+                                </div>
+
+                                <div class="col-sm-6">
+
+                                    <div class="form-group">
+                                        <label>Re-Password</label>
+                                        <input type="password" class="form-control" name="re-password" id="re-password"
+                                            placeholder="Your re-password here">
+                                        <span style="color: red;" id="errorRePassword" style="display:none"></span>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+
+                            <button type="submit" class="butn-style2 mt-4">Register</button>
+
+                        </form>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+
+
+
+
+    <script>
+
+        const forms = document.getElementById('register');
+        forms.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const usernameInput = document.getElementById('username');
+            const phoneInput = document.getElementById('phone');
+            const passwordInput = document.getElementById('password');
+            const rePasswordInput = document.getElementById('re-password');
+
+
+
+            const usernameValue = usernameInput.value.trim();
+            const phoneValue = phoneInput.value.trim();
+            const passwordValue = passwordInput.value.trim();
+            const rePasswordValue = rePasswordInput.value.trim();
+
+
+
+
+
+            if (usernameValue < 4) {
+                usernameInput.style.borderColor = 'red';
+                const errorMessageElement = document.getElementById('errorUser');
+                errorMessageElement.innerHTML = 'Enter Atleast 3 Charcters';
+                errorMessageElement.style.display = 'block';
+            }
+            else {
+                usernameInput.style.borderColor = '';
+            }
+
+
+
+
+
+            if (phoneValue === '' || phoneValue.length !== 10) {
+                phoneInput.style.borderColor = 'red';
+                const errorMessageElement = document.getElementById('errorPhone');
+                errorMessageElement.innerHTML = 'Enter Valid Mobile Number';
+                errorMessageElement.style.display = 'block';
+            } else {
+                phoneInput.style.borderColor = '';
+            }
+
+
+            if (passwordValue < 4) {
+                passwordInput.style.borderColor = 'red';
+
+                const errorMessageElement = document.getElementById('errorPassword');
+                errorMessageElement.innerHTML = 'Enter Atleast 4 Charcters';
+                errorMessageElement.style.display = 'block';
+            } else {
+                passwordInput.style.borderColor = '';
+            }
+
+
+            if (rePasswordValue === '' || rePasswordValue !== passwordValue) {
+                rePasswordInput.style.borderColor = 'red';
+                const errorMessageElement = document.getElementById('errorRePassword');
+                errorMessageElement.innerHTML = "Password Doesn't Match";
+                errorMessageElement.style.display = 'block';
+
+            } else {
+                rePasswordInput.style.borderColor = '';
+            }
+            if (usernameValue < 4 && phoneValue !== 10 && passwordValue !== '' && rePasswordValue === passwordValue) {
+                const formData = new FormData(forms);
+
+
+                const data = {
+                    username: formData.get('username'),
+                    phone: formData.get('phone'),
+                    password: formData.get('password'),
+                    re_password: formData.get('re-password')
+                };
+
+
+                try {
+                    const response = await fetch('/register', {
+                        method: 'POST',
+                        body: JSON.stringify(data),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+
+                    const responseData = await response.json();
+
+                    if (responseData.status) {
+                        console.log("success");
+                        window.location = "/login?success=register_success"
+                    } else if (responseData.err === "username") {
+                        const errorMessageElement = document.getElementById('errorUser');
+                        errorMessageElement.innerHTML = 'Username already exists';
+                        errorMessageElement.style.display = 'block';
+                    } else if (responseData.err === "phone") {
+                        const errorMessageElement = document.getElementById('errorPhone');
+                        errorMessageElement.innerHTML = 'Phone number already exists';
+                        errorMessageElement.style.display = 'block';
+                    } else {
+                        const errorMessageElement = document.getElementById('errorUser');
+                        errorMessageElement.innerHTML = 'Something Went Worng';
+                        errorMessageElement.style.display = 'block';
+                    }
+
+                } catch (error) {
+                    console.error(error);
+                }
+            }
+        });
+
+
+    </script>
+    <%- include('../layouts/userFooter.ejs') %>
