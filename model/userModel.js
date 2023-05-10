@@ -16,14 +16,12 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    isAdmin: {
-        type: Number,
-        default: 0,
-    },
     isBlocked: {
         type: Boolean,
         default:false,
     },
 });
 
-module.exports = mongoose.model("User", userSchema);
+User = mongoose.model("User", userSchema);
+
+module.exports = User;

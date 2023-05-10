@@ -5,11 +5,11 @@ const nocache = require('nocache');
 const morgan = require('morgan');
 const dbConnection = require('./config/dbConnect')
 const app = express();
-require('dotenv').config();
+require('dotenv').config({ path: '../../.env' });
 
 dbConnection.mongooseConnection();
 
-const PORT = 3000;
+const PORT =  process.env.PORT  ;
 
 app.use(morgan('tiny'));
 app.use(express.json());
@@ -42,10 +42,10 @@ app.use("/", userRoute);
 //...................... ADMIN ROUTE ......................//
 
 const adminRoute = require("./routes/adminRoute");
-app.use("/admin", adminRoute);
+app.use('/admin', adminRoute);
 
 
 
 app.listen(PORT, () => {
-    console.log("Server running...");
+    console.log(`Server running at ${PORT}`);
 });

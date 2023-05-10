@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+
+<head>
+
+    <!-- metas -->
+    <meta charset="utf-8">
+    <meta name="author" content="Chitrakoot Web" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="keywords" content="Multipurpose eCommerce Template + Admin" />
+    <meta name="description" content="Smartshop - Multipurpose eCommerce Template + Admin" />
+
+    <!-- title  -->
+    <title>Tokify</title>
+
+    <!-- favicon -->
+    <link rel="shortcut icon" href="img/logos/favicon.png">
+    <link rel="apple-touch-icon" href="img/logos/apple-touch-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="img/logos/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="img/logos/apple-touch-icon-114x114.png">
+
+    <!-- plugins -->
+    <link rel="stylesheet" href="css/plugins.css">
+
+    <!-- theme core css -->
+    <link href="css/styles.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+
+    <section class="md">
+        <div class="container">
+            <div class="row d-flex justify-content-center align-items-center">
+                <div class="col-lg-6 mb-1-9 mb-lg-0">
+
+                    <div class="common-block">
+
+                        <div class="inner-title">
+                            <h4 class="mb-0">Login</h4>
+                            <p class="mb-0">Welcome Back Admin.</p>
+                        </div>
+
+                        <form method="post" id="login" action="\admin">
+
+                            <div class="row">
+
+                                <div class="col-sm-12">
+
+                                    <div class="form-group">
+                                        <label>User Name</label>
+                                        <input id="userName" type="text" class="form-control" name="username"
+                                            placeholder="Your user name here">
+                                        <span style="color: red;" id="errorUser" style="display:none"></span>
+
+                                    </div>
+
+                                </div>
+
+                                <div class="col-sm-12">
+
+                                    <div class="form-group">
+                                        <label>Password </label>
+                                        <input id="password" type="password" class="form-control" name="password"
+                                            placeholder="Your password here">
+                                        <span style="color: red;" id="errorPassword" style="display:none"></span>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-6">
+
+                                </div>
+                                <div class="col-sm-6 text-start text-md-end">
+                                    <a href="account-password-recovery.html" class="m-link-muted">Forgot password?</a>
+                                </div>
+
+                            </div>
+
+                            <button type="submit" class="butn-style2 mt-4">Login</button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+
+
+    <script>
+        if (window.location.search.includes("success=register_success")) {
+
+            const successMessage = document.createElement("div");
+            successMessage.innerText = "Registration successful. Please login to continue.";
+            successMessage.classList.add("success-message");
+            successMessage.style.color = "green";
+            const innerTitle = document.querySelector(".inner-title");
+            innerTitle.insertAdjacentElement("afterend", successMessage);
+            setTimeout(() => {
+                successMessage.style.display = "none";
+            }, 10000);
+        }
+    </script>
+    <script>
+        const form = document.getElementById('login');
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const usernameInput = document.getElementById('userName');
+            const passwordInput = document.getElementById('password');
+
+            const usernameValue = usernameInput.value.trim();
+            const passwordValue = passwordInput.value.trim();
+
+
+            usernameInput.style.borderColor = '';
+            passwordInput.style.borderColor = '';
+            const errorMessageElementUser = document.getElementById('errorUser');
+            errorMessageElementUser.style.display = 'none';
+            const errorMessageElementPassword = document.getElementById('errorPassword');
+            errorMessageElementPassword.style.display = 'none';
+
+            if (usernameValue.length < 4) {
+                usernameInput.style.borderColor = 'red';
+                const errorMessageElement = document.getElementById('errorUser');
+                errorMessageElement.innerHTML = 'Invalid User Name';
+                errorMessageElement.style.display = 'block';
+            } else {
+                usernameInput.style.borderColor = '';
+            }
+
+            if (passwordValue.length < 4) {
+                passwordInput.style.borderColor = 'red';
+                const errorMessageElement = document.getElementById('errorPassword');
+                errorMessageElement.innerHTML = 'Invalid Password';
+                errorMessageElement.style.display = 'block';
+            } else {
+                passwordInput.style.borderColor = '';
+            }
+
+            if (usernameValue.length > 2 && passwordValue.length > 3) {
+                const formData = new FormData(form);
+                const data = {
+                    username: formData.get('username'),
+                    password: formData.get('password'),
+                };
+                try {
+                    const response = await fetch('/admin', {
+                        method: 'POST',
+                        body: JSON.stringify(data),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+
+                    const responseData = await response.json();
+                    if (responseData.status) {
+                        window.location = "/admin/home"
+                    } else if (responseData.err === "user") {
+                        const errorMessageElement = document.getElementById('errorUser');
+                        errorMessageElement.innerHTML = 'User Not exists';
+                        errorMessageElement.style.display = 'block';
+                    } else if (responseData.err === "password") {
+                        const errorMessageElement = document.getElementById('errorPassword');
+                        errorMessageElement.innerHTML = "Password Doesn't match";
+                        errorMessageElement.style.display = 'block';
+                    } else {
+                        const errorMessageElement = document.getElementById('errorUser');
+                        errorMessageElement.innerHTML = 'Something Went Wrong';
+                        errorMessageElement.style.display = 'block';
+                    }
+                } catch (error) {
+                    console.log(error);
+                }
+            }
+        });
+
+    </script>
+<!-- all js include start -->
+
+<!-- jQuery -->
+<script src="js/jquery.min.js"></script>
+
+<!-- popper js -->
+<script src="js/popper.min.js"></script>
+
+<!-- bootstrap -->
+<script src="js/bootstrap.min.js"></script>
+
+<!-- core.min.js -->
+<script src="js/core.min.js"></script>
+
+<!-- custom scripts -->
+<script src="js/main.js"></script>
+
+<!-- all js include end -->
+
+</body>
+
+
+
+</html>
